@@ -1,0 +1,78 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DEMO: 文字转换成图片</title>
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<style type="text/css">
+.demo{width:400px; margin:40px auto 0 auto; min-height:250px;}
+.demo p{line-height:30px}
+</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    $("#commit").on('click',createImg);
+    $("#decode").on('click',parseImg);
+    $("#export").click(function(){
+        var content = DATA.str || '';
+        if(content.length > 0){
+            var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+            //var filename = $('input[type="file"]').val().replace(/\\/g,'/');
+            var arr = $('input[type="file"]').val().split('\\');
+            if(arr[0]){
+                var filename = arr[arr.length-1].split('\.')[0] + '.txt';
+                saveAs(blob,filename)//saveAs(blob, "file.txt");
+            }else{
+                console.log('MSG----解析文件名失败')
+            }
+        }else{
+            console.log('MSG----内容为空，请检查是否已解析')
+        }
+    });
+    init();
+})
+function readfile(f){
+    if(/image/.test(f.type)){
+        readAsDataURL(f);
+    }else{
+        alert('请打开一张图片！');
+    }
+}
+function readAsDataURL(f){
+    var reader = new FileReader();
+    reader.readAsDataURL(f);
+    reader.onload = function() {
+        var result = reader.result;
+        var out = document.getElementById("output")
+        out.innerHTML = "<img src='" + result + "' id='img'/>";
+    }
+    reader.onerror = function(e) {  // If anything goes wrong
+        console.log("Error", e);    // Just log it
+    };
+}
+</script>
+</head>
+
+<body>
+<div id="main">
+   <h2 class="top_title">生成图片</h2>
+    <div class="demo">
+        <p>请输入内容然后提交生成图片：</p>
+        <p><input type="text" class="input" id="mytxt" value=""> <input type="button" id="commit" value="提交"></p>
+        <canvas id="myCanvas" width="300" height="300" style="border:1px solid #d3d3d3;">Your browser does not support the HTML5 canvas tag.</canvas>
+    </div>
+    <div class="demo">
+        <p>请选择一张要解析的图片：</p>
+        <p>
+            <input type="file" onchange="readfile(this.files[0])"></input>
+            <input type="button" id="decode" value="解析">
+            <input type="button" id="export" value="导出"/>
+        </p>
+        <pre id="output"><img src="./test.png" id="img" alt="img" style="margin-left:10px;"></pre>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="Js/FileSaver.min.js" charset="utf-8"></script><!-- 文件操作模块 -->
+<script type="text/javascript" src="Js/mainJs.js"></script>
+<script type="text/javascript" src="Js/chinese.js"></script><!-- 如果是纯英文，则不需引用该文件 -->
+</html>
